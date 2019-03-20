@@ -1,0 +1,84 @@
+version: '1.0'
+
+stages:
+- preparation
+- test
+- build
+- push
+- run
+
+steps:
+
+  install_dependencies:
+    title: 'Installing testing dependencies'
+    stage: preparation
+    image: codefresh/node-tester-image:9.6.1
+    commands:
+        - yarn install --frozen-lockfile
+#
+#  eslint:
+#    title: 'Running linting logic'
+#    stage: preparation
+#    image: codefresh/node-tester-image:9.6.1
+#    commands:
+#        - yarn eslint
+#
+#  unit_test_step:
+#    title: "Executing unit tests"
+#    stage: test
+#    type: composition
+#    add_flow_volume_to_composition: true
+#    composition: 'Analytic unit-test'
+#    composition_candidates:
+#      test:
+#        image: codefresh/node-tester-image:9.6.1
+#        command: yarn test
+#        working_dir: '${{CF_VOLUME_PATH}}/cf-analytic'
+#        volumes:
+#          - '${{CF_VOLUME_NAME}}:/codefresh/volume'
+#
+#
+#  test_reporting_step:
+#    title: "Generate test reporting"
+#    fail_fast: false
+#    stage: test
+#    image: codefresh/cf-docker-test-reporting
+#    working_directory: '${{CF_VOLUME_PATH}}/cf-analytic/'
+#    environment:
+#        - REPORT_DIR=coverage
+#        - REPORT_INDEX_FILE=lcov-report/index.html
+#        - BUCKET_NAME=codefresh-test-report
+#        - CF_STORAGE_INTEGRATION=testReporting
+  build_step:
+    title: "Building production image"
+    stage: build
+    type: build
+    dockerfile: Dockerfile
+    image_name: codefresh/slacknotifier
+    metadata:
+      set:
+        - CF_QUALITY: true
+
+  PushingToDockerRegistry:
+    title: Pushing to Docker Registry
+    type: push
+    candidate: '${{build_step}}'
+    tag: 'latest'
+    registry: dockerhub
+    when:
+      branch:
+        only:
+          - master
+
+  SendToSlack:
+    title: Sending message to slack
+    image: codefresh/slacknotifier
+    environment:
+      - SLACK_HOOK_URL=${{HOOK_URL}}
+      - MODE=default-template
+    when:
+      branch:
+        only:
+          - master
+
+
