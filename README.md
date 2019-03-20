@@ -1,59 +1,74 @@
-Webhook step
+# Codefresh webhook plugin
 
-```
+Plugin which simply send notification 
+
+## Using example
+
+send basic variables
+```yaml
+version: '1.0'
+fail_fast: false
+...
 steps:
- SendWebhook:
-    title: Webhook
-    image: andriicodefresh/webhook-plugin
-    environment:
-    - WEBHOOK_URL=${{WEBHOOK_URL}}
-    - WEBHOOK_METHOD=${{WEBHOOK_METHOD}}
-    - WEBHOOK_USERNAME=${{WEBHOOK_USERNAME}}
-    - WEBHOOK_PASSWORD=${{WEBHOOK_PASSWORD}}
-    - WEBHOOK_TOKEN=${{WEBHOOK_TOKEN}}
-    - WEBHOOK_HEADERS:
-      - "Content-Type:application/json"
-    - WEBHOOK_QUERY:
-      - "repo=${{REPO_NAME}}"
-    - WEBHOOK_BODY: |
-      {
-        "owner": "{{ repo.owner }}",
-        "name": "{{ repo.name }}",
-      }
+  ...
+  TestPlugin:
+    title: TestPlugin
+    image: codefresh/cf-webhook:latest
+    environment: 
+        - "WEBHOOK_URL=http://example.com/api/endpoint"
 ```
 
-Abilities: 
-1. You can send simple message , just put SLACK_TEXT as env variable
-2. You can send template message, just put ATTACHMENTS as env variable
-Example 
-```
-[{
-    "fallback": "Deployed to Staging environment",
-    "color": "good",
-    "pretext": "Added XYZ to feature-104",
-    "author_name": "Auto Deploy Robot",
-    "author_link": "https://cloudposse.com/wp-content/uploads/sites/29/2018/02/small-cute-robot-square.png",
-    "author_icon": "https://cloudposse.com/wp-content/uploads/sites/29/2018/02/small-cute-robot-square.png",
-    "title": "test",
-    "title_link": "test",
-    "thumb_url": "https://cloudposse.com/wp-content/uploads/sites/29/2018/02/SquareLogo2.png",
-    "footer": "test",
-    "fields": [{"title": "Project", "value": "Awesome Project", "short": true}, {
-        "title": "Environment",
-        "value": "production",
-        "short": true
-    }]
-}]
-```
- 
-List of env variables
-
+send custom request
+```yaml
+version: '1.0'
+fail_fast: false
+...
+steps:
+  ...
+  TestPlugin:
+    title: TestPlugin
+    image: codefresh/cf-webhook:latest
+    environment: 
+        - "WEBHOOK_URL=http://example.com/api/endpoint"
+        - "HEADER_Content-Type=plain/text"
+        - "HEADER_X-Auth-Token={{apiKey}}"
+        - "WEBHOOK_URL={{status}}"
 ```
 
-SLACK_HOOK_URL - required
-SLACK_ATTACHMENTS    - optional
-SLACK_TEXT     - optional
-SLACK_USER_NAME - optional
-SLACK_ICON_EMOJI - optional
+## Required variables
 
-```
+- `WEBHOOK_URL` - webhook uri
+
+## Optional variables
+
+**if you not provide this variables, plugin send all variables in json**
+
+- `WEBHOOK_METHOD` - HTTP method (GET, POST, PUT, PATCH)
+- Auth
+  - **HTTP Basic Authentication** 
+    - `WEBHOOK_USERNAME` - username 
+    - `WEBHOOK_PASSWORD` - password
+  - **HTTP Token**
+    - `WEBHOOK_TOKEN` - token will be provided in header *Authorization*
+- `WEBHOOK_BODY` - body of http request    
+- `HEADER_headerName` - provide headers for request, example: `HEADER_Content-type`, `HEADER_X-Auth-Token`
+- `QUERY_paramName` - provide variables into queryString, example: `QUERY_id`, `QUERY_name` will be processed as `/?id=xxx&name=yyy` 
+
+
+## Variables
+In **HEADER**, **QUERY** and **WEBHOOK_BODY** variables you can use next templates constants
+- `{{build.trigger}}` 
+- `{{build.initiator}}`  
+- `{{build.id}}` 
+- `{{build.timestamp}}`  
+- `{{build.url}}` 
+- `{{repo.owner}}`  
+- `{{repo.name}}`  
+- `{{branch}}` 
+- `{{apiKey}}`
+- `{{revision}}`  
+- `{{commit.author}}` 
+- `{{commit.url}}` 
+- `{{commit.message}}`
+- `{{status}}` - build status
+- `{{causes}}` - build failed causes  
