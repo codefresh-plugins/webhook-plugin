@@ -41,17 +41,16 @@ steps:
 
 ## Optional variables
 
-**if you not provide this variables, plugin send all variables in json**
-
-- `WEBHOOK_METHOD` - HTTP method (GET, POST, PUT, PATCH)
+- `WEBHOOK_METHOD` - HTTP method (GET, POST, PUT, PATCH), default: **POST**
 - Auth
   - **HTTP Basic Authentication** 
     - `WEBHOOK_USERNAME` - username 
     - `WEBHOOK_PASSWORD` - password
   - **HTTP Token**
     - `WEBHOOK_TOKEN` - token will be provided in header *Authorization*
-- `WEBHOOK_BODY` - body of http request    
-- `HEADER_headerName` - provide headers for request, example: `HEADER_Content-type`, `HEADER_X-Auth-Token`
+- `WEBHOOK_BODY` - body of http request, default: JSON with [full variables list](#variables)    
+- `HEADER_headerName` - provide headers for request, example: `HEADER_Content-type`, `HEADER_X-Auth-Token`,   
+default **HEADER_Content-Type=application/json**
 - `QUERY_paramName` - provide variables into queryString, example: `QUERY_id`, `QUERY_name` will be processed as `/?id=xxx&name=yyy` 
 
 
