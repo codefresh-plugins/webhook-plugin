@@ -1,13 +1,17 @@
 const config = require('../config');
-const PluginLogic = require('./plugin.logic');
+const pluginLogic = require('./plugin.logic');
 const Codefresh = require('../helpers/codefresh.api');
 
 class PluginController {
 
     constructor() {
         this.sendNotify = this.sendNotify.bind(this);
+    }
 
-        this._ALLOWED_METHODS = ['GET', 'POST', 'PUT', 'PATCH'];
+    _isAllowedMethod(method) {
+        const allowedMethod = ['GET', 'POST', 'PUT', 'PATCH'];
+
+        return allowedMethod.includes(method);
     }
 
     /**
@@ -16,13 +20,15 @@ class PluginController {
      * @private
      */
     async _getData() {
-        const buildCauses = await Codefresh.buildCauses(Codefresh.info.build.id, Codefresh.info.apiKey);
+        const buildFailureCauses = await Codefresh.buildFailureCauses(Codefresh.info.build.id, Codefresh.info.apiKey);
 
-        return {
+        const { apiKey, ...res } = {
             ...Codefresh.info,
-            causes: buildCauses,
-            status: buildCauses.length ? 'failed' : 'success',
+            causes: buildFailureCauses,
+            status: buildFailureCauses.length ? 'failed' : 'success',
         };
+
+        return res;
     }
 
     /**
@@ -38,7 +44,7 @@ class PluginController {
 
     async sendNotify() {
         this._validate();
-        const isCorrectMethod = config.method && this._ALLOWED_METHODS.includes(config.method);
+        const isCorrectMethod = config.method && this._isAllowedMethod(config.method);
         const method = isCorrectMethod ? config.method : 'POST';
         const body = config.body;
         const defaultHeaders = {
@@ -48,7 +54,7 @@ class PluginController {
         const tplData = await this._getData();
         console.log(tplData);
 
-        return await PluginLogic.getRequest({
+        return pluginLogic.sendRequest({
             uri: config.url,
             method,
             body: body || JSON.stringify(tplData, null, 2),

@@ -64,7 +64,6 @@ In **HEADER**, **QUERY** and **WEBHOOK_BODY** variables you can use next templat
 - `{{repo.owner}}`  
 - `{{repo.name}}`  
 - `{{branch}}` 
-- `{{apiKey}}`
 - `{{revision}}`  
 - `{{commit.author}}` 
 - `{{commit.url}}` 

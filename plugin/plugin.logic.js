@@ -4,7 +4,7 @@ const Handlebars = require('handlebars');
 
 class PluginLogic {
     constructor() {
-        this.getRequest = this.getRequest.bind(this);
+        this.sendRequest = this.sendRequest.bind(this);
     }
 
     /**
@@ -77,8 +77,8 @@ class PluginLogic {
      * @param tplData
      * @return {Promise<void>}
      */
-    async getRequest({ uri, method, body, tplData = {}, defaultHeaders = {} }) {
-        return await request({
+    sendRequest({ uri, method, body, tplData = {}, defaultHeaders = {} }) {
+        return request({
             uri,
             method,
             body: this._processTemplate(body, tplData),

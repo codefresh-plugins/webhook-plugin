@@ -29,7 +29,7 @@ class Codefresh {
         };
     }
 
-    async buildCauses(buildId, token) {
+    async buildFailureCauses(buildId, token) {
         console.log(token, buildId);
         const data = await request({
             uri: `https://g.codefresh.io/api/workflow/${buildId}/context-revision`,

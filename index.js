@@ -1,5 +1,5 @@
-const PluginController = require('./plugin/plugin.controller');
+const pluginController = require('./plugin/plugin.controller');
 
-PluginController.sendNotify()
+pluginController.sendNotify()
     .then(console.log)
     .catch(console.error);
