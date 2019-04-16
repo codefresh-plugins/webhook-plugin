@@ -10,7 +10,7 @@ sources:
   - https://github.com/codefresh-io/webhook-plugin
 maintainers:
   - name: Andrii Shaforostov
-email: andrii@codefresh.io
+  email: andrii@codefresh.io
 envs:
   - name: WEBHOOK_USERNAME
     type: required
