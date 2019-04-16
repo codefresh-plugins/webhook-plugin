@@ -17,4 +17,4 @@ RUN yarn install --frozen-lockfile --production
 COPY . ./
 
 # run application
-CMD ["node", "/app/index.js"]
+CMD ["node", "index.js"]
