@@ -4,7 +4,7 @@ tag: master
 version: 0.1.0
 description: Plugin which simply send notification
 categories:
-- Notifications
+- notifications
 keywords:
 - webhook
 sources:
