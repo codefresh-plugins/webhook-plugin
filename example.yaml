@@ -1,7 +1,7 @@
 steps:
   TestPlugin:
     title: TestPlugin
-    image: codefresh/webhook-plugin
+    image: codefreshplugins/webhook-plugin
     environment:
     - "WEBHOOK_URL=http://example.com/api/endpoint"
     - "HEADER_Content-Type=plain/text"

@@ -1,5 +1,5 @@
 name: webhook-plugin
-image: codefresh/webhook-plugin
+image: codefreshplugins/webhook-plugin
 tag: master
 version: 0.1.0
 description: Plugin which simply send notification
